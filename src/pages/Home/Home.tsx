@@ -1,14 +1,26 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { SampleComponent } from '../../components';
+import useMqttClient from '../../hooks/useMqttClient';
 
-const Home = (): JSX.Element => (
-	<div>
-		<h1>Welcome to Home, Below is A Sample Component.</h1>
-		<Link to="/redux-sample">Redux Sample</Link>
-		<Link to="/redux-sample-api">Redux Sample</Link>
-		<SampleComponent />
-	</div>
-);
+const Home = (): JSX.Element => {
+	const { connectStatus, payload } = useMqttClient({
+		host: '14.198.73.92',
+		protocol: 'ws',
+		port: 9001,
+		topic: 'ws/angle_monitor',
+	});
+
+	return (
+		<>
+			<h1>
+				Status:
+				{connectStatus}
+			</h1>
+			<h1>
+				Payload:
+				{payload}
+			</h1>
+		</>
+	);
+};
 
 export default Home;

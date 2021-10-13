@@ -2,8 +2,11 @@
   "compilerOptions": {
     "target": "es5",
     "module": "esnext",
-    "lib": ["es6", "dom"],
-    "jsx": "react",
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "jsx": "react-jsx",
     "strict": true,
     "esModuleInterop": true,
     "allowJs": true,
@@ -16,5 +19,7 @@
     "noEmit": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": [
+    "src"
+  ]
 }

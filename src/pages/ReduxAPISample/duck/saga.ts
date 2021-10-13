@@ -12,7 +12,7 @@ Generator<CallEffect<AxiosResponse> | PutEffect<Action<string>>, void, unknown> 
 		const datas = yield call(fetchDatas);
 		yield put(DatasActions.fetchDatasSuccess(datas));
 	} catch (error) {
-		yield put(DatasActions.fetchDatasFail(error.message));
+		yield put(DatasActions.fetchDatasFail(`${error}`));
 	}
 }
 
