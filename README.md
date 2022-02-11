@@ -1,4 +1,9 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## First step after cloning repo is to
+
+### `yarn install`
+
+This will install all the needed node modules first
 
 ## Available Scripts
 
