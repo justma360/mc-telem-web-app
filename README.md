@@ -8,6 +8,8 @@ In the project directory, you can run:
 
 Runs the app in the development mode.<br />
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+To change the localhost port number go to the package.json file and change the to 
+>"start": "PORT=3006 react-scripts start"
 
 The page will reload if you make edits.<br />
 You will also see any lint errors in the console.
