@@ -3,15 +3,12 @@ import DatasReducer from './duck/reducer';
 import ReduxAPISample from './ReduxAPISample';
 import { watchFetchDatas } from './duck/saga';
 
-function* DatasSaga():
-Generator<AllEffect<Generator<ForkEffect<never>, void, unknown>>, void, unknown> {
-	yield all([
-		watchFetchDatas(),
-	]);
+function* DatasSaga(): Generator<
+  AllEffect<Generator<ForkEffect<never>, void, unknown>>,
+  void,
+  unknown
+> {
+  yield all([watchFetchDatas()]);
 }
 
-export {
-	DatasSaga,
-	DatasReducer,
-	ReduxAPISample,
-};
+export { DatasSaga, DatasReducer, ReduxAPISample };

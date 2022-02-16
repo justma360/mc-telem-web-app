@@ -8,15 +8,10 @@ const sagaMiddleware = createSagaMiddleware();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(
-	reducer,
-	composeEnhancers(applyMiddleware(sagaMiddleware)),
-);
+const store = createStore(reducer, composeEnhancers(applyMiddleware(sagaMiddleware)));
 
 function* rootSaga() {
-	yield all([
-		DatasSaga(),
-	]);
+  yield all([DatasSaga()]);
 }
 sagaMiddleware.run(rootSaga);
 

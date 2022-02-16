@@ -4,7 +4,4 @@ import { State } from './reducer';
 
 export const selectTextData = (state: RootState): State => state.text;
 
-export const selectText = createSelector(
-	selectTextData,
-	(data) => data.text,
-);
+export const selectText = createSelector(selectTextData, (data) => data.text);

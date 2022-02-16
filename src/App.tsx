@@ -4,9 +4,9 @@ import MainRouter from './router';
 import store from './store';
 
 const App: React.FC = () => (
-	<Provider store={store}>
-		<MainRouter />
-	</Provider>
+  <Provider store={store}>
+    <MainRouter />
+  </Provider>
 );
 
 export default App;

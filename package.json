@@ -33,7 +33,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint \"**/*.{ts,tsx}\"",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "yarn lint -- --fix"
   },
   "eslintConfig": {
     "extends": "react-app"
