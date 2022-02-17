@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { MainLayout } from '../../layouts';
 
-const About = (): JSX.Element => {
+const Blog = (): JSX.Element => {
   return (
     <>
       <MainLayout>
@@ -10,10 +10,10 @@ const About = (): JSX.Element => {
           <Link to="/"> Home Page</Link>
         </div>
 
-        <h1>About Page</h1>
+        <h1>This is where I will talk about my life and shiz</h1>
       </MainLayout>
     </>
   );
 };
 
-export default About;
+export default Blog;

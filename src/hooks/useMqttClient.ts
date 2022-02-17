@@ -1,7 +1,5 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import mqtt, { MqttClient } from 'mqtt';
-import { ArduinoData } from '../types';
-import { transformArduinoData } from '../utils';
 
 interface ReturnType {
   connectStatus: string;

@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-export const SampleComponent = (): JSX.Element => <div>hello world</div>;
+export const SampleComponent = memo(() => <div>hello world</div>);
+
+SampleComponent.displayName = 'SampleComponent';
 
 export default SampleComponent;
