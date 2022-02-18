@@ -12,6 +12,8 @@ import RawOnIcon from '@mui/icons-material/RawOn';
 import HomeIcon from '@mui/icons-material/Home';
 import InfoIcon from '@mui/icons-material/Info';
 import BookIcon from '@mui/icons-material/Book';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import TerminalIcon from '@mui/icons-material/Terminal';
 
 interface Props {
   open: boolean;
@@ -26,19 +28,29 @@ const Drawer = memo(({ open, handleToggleNavMenu }: Props): JSX.Element => {
       icon: <HomeIcon />,
     },
     {
-      path: '/about',
-      name: 'About',
-      icon: <InfoIcon />,
-    },
-    {
       path: '/raw-data',
       name: 'Raw Data',
       icon: <RawOnIcon />,
     },
     {
+      path: '/graphs',
+      name: 'Graphs',
+      icon: <TimelineIcon />,
+    },
+    {
+      path: '/ControlTerminal',
+      name: 'Control Terminal',
+      icon: <TerminalIcon />,
+    },
+    {
       path: '/blog',
       name: 'Blog',
       icon: <BookIcon />,
+    },
+    {
+      path: '/about',
+      name: 'About',
+      icon: <InfoIcon />,
     },
   ];
 

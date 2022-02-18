@@ -9,7 +9,6 @@ const About = (): JSX.Element => {
         <div>
           <Link to="/"> Home Page</Link>
         </div>
-
         <h1>About Page</h1>
       </MainLayout>
     </>

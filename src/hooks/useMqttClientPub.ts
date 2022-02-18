@@ -3,8 +3,8 @@ import mqtt, { MqttClient } from 'mqtt';
 
 interface ReturnType {
   connectStatus: string;
-  payload: string | null;
   client: MqttClient | null;
+  handlePublishMessage: (msg: string) => void;
 }
 
 interface OptionsType {
@@ -14,10 +14,14 @@ interface OptionsType {
   topic: string;
 }
 
-const useMqttClient = ({ protocol, host, port, topic }: OptionsType): ReturnType => {
+const useMqttClientPub = ({ protocol, host, port, topic }: OptionsType): ReturnType => {
   const [client, setClient] = useState<MqttClient | null>(null);
   const [connectStatus, setConnectStatus] = useState('Offline');
-  const [payload, setPayload] = useState<string | null>(null);
+  const [publishMessage, setPublishMessage] = useState<string | null>(null);
+
+  const handlePublishMessage = (msg: string) => {
+    setPublishMessage(msg);
+  };
 
   useEffect(() => {
     const mqttClient = mqtt.connect(`${protocol}://${host}:${port}`);
@@ -35,19 +39,17 @@ const useMqttClient = ({ protocol, host, port, topic }: OptionsType): ReturnType
       client.on('reconnect', () => {
         setConnectStatus('Reconnecting');
       });
-      client.subscribe(topic);
-      client.on('message', (_, message) => {
-        if (payload === message.toString()) return;
-        setPayload(message.toString());
-      });
+      if (publishMessage) {
+        client.publish(topic, publishMessage);
+      }
     }
-  }, [client, payload, topic]);
+  }, [client, topic, publishMessage]);
 
   return {
     connectStatus,
-    payload,
     client,
+    handlePublishMessage,
   };
 };
 
-export default useMqttClient;
+export default useMqttClientPub;
