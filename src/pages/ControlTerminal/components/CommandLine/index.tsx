@@ -11,12 +11,7 @@ import { errorClass } from '../../../../utils/Error';
 import useMqttClient from '../../../../hooks/useMqttClient';
 import validArduinoCommands from '../../../../constants/validArduinoCommands';
 import styles from './styles.module.scss';
-
-interface controlItem {
-  value: string;
-  alignment: 'left' | 'right' | 'center'; // If its sent then its right side
-  color?: 'red' | 'green' | 'black' | undefined;
-}
+import { controlItem } from '../../../../types/ControlItem';
 
 const CommandLine = (): JSX.Element => {
   const [controlMessage, setControlMessage] = useState<controlItem[]>([]);
