@@ -12,9 +12,10 @@ interface OptionsType {
   host: string; // IP Address or URL
   port: number;
   topic: string;
+  duplicates: boolean;
 }
 
-const useMqttClient = ({ protocol, host, port, topic }: OptionsType): ReturnType => {
+const useMqttClient = ({ protocol, host, port, topic, duplicates }: OptionsType): ReturnType => {
   const [client, setClient] = useState<MqttClient | null>(null);
   const [connectStatus, setConnectStatus] = useState('Offline');
   const [payload, setPayload] = useState<string | null>(null);
@@ -37,11 +38,13 @@ const useMqttClient = ({ protocol, host, port, topic }: OptionsType): ReturnType
       });
       client.subscribe(topic);
       client.on('message', (_, message) => {
-        if (payload === message.toString()) return;
+        if (duplicates === false) {
+          if (payload === message.toString()) return;
+        }
         setPayload(message.toString());
       });
     }
-  }, [client, payload, topic]);
+  }, [client, payload, topic, duplicates]);
 
   return {
     connectStatus,

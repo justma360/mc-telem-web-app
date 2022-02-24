@@ -12,7 +12,7 @@ const DisplayError = ({ isError, errorType }: errorClass): JSX.Element => {
         {errorType}
       </div>
     );
-    // Return the errror
+    // Return the error
   }
   return <div />;
 };

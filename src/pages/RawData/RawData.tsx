@@ -10,6 +10,7 @@ const RawData = (): JSX.Element => {
     protocol: 'tcp', // Protocall
     port: 9001,
     topic: 'tcp/arduino_data', // topic to sub to
+    duplicates: false,
   });
   const sensorDataArr: ArduinoData[] = useMemo(() => [], []);
 
@@ -19,7 +20,6 @@ const RawData = (): JSX.Element => {
       // If the payload has arrived (useMQTT checks to make sure its new)
       const arduinoData = transformArduinoData(payload); // Transform the arduino Payload
       sensorDataArr.push(arduinoData);
-      // console.log(sensorDataArr.length);
     }
   }, [payload, sensorDataArr]); // Event is when payload changes
 

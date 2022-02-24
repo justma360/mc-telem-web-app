@@ -14,7 +14,7 @@ interface OptionsType {
   topic: string;
 }
 
-const useMqttClientPub = ({ protocol, host, port, topic }: OptionsType): ReturnType => {
+const useMqttPubClient = ({ protocol, host, port, topic }: OptionsType): ReturnType => {
   const [client, setClient] = useState<MqttClient | null>(null);
   const [connectStatus, setConnectStatus] = useState('Offline');
   const [publishMessage, setPublishMessage] = useState<string | null>(null);
@@ -52,4 +52,4 @@ const useMqttClientPub = ({ protocol, host, port, topic }: OptionsType): ReturnT
   };
 };
 
-export default useMqttClientPub;
+export default useMqttPubClient;

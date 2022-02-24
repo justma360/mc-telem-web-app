@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { RootState } from 'MyTypes';
 import * as Actions from './duck/action';
 import { selectText } from './duck/selector';
+import { MainLayout } from '../../layouts';
 
 interface Props {
   setText: (text: string) => void;
@@ -22,17 +23,19 @@ const ReduxSample = ({ setText, text }: Props) => {
   };
 
   return (
-    <div>
-      <h1>Redux Sample</h1>
-      <p>
-        Current State:
-        {text}
-      </p>
-      <input onChange={handleInputChange} type="text" />
-      <button type="button" onClick={handleClick}>
-        Update Redux State
-      </button>
-    </div>
+    <MainLayout>
+      <div>
+        <h1>Redux Sample</h1>
+        <p>
+          Current State:
+          {text}
+        </p>
+        <input onChange={handleInputChange} type="text" />
+        <button type="button" onClick={handleClick}>
+          Update Redux State
+        </button>
+      </div>
+    </MainLayout>
   );
 };
 
