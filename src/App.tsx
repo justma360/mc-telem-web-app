@@ -1,9 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import MainRouter from './router';
-import store from './store';
+import { store } from './store';
 
-const App: React.FC = () => (
+const App = (): JSX.Element => (
   <Provider store={store}>
     <MainRouter />
   </Provider>

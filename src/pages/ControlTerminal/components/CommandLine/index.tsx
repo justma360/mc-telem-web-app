@@ -6,15 +6,23 @@ import { FormLabel } from '@material-ui/core';
 import { Button, TextField, Paper, List, Typography } from '@mui/material';
 import { green } from '@mui/material/colors';
 import { alpha, styled } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
 import useMqttPubClient from '../../../../hooks/useMqttPubClient';
 import { errorClass } from '../../../../utils/Error';
 import useMqttClient from '../../../../hooks/useMqttClient';
 import validArduinoCommands from '../../../../constants/validArduinoCommands';
 import styles from './styles.module.scss';
-import { controlItem } from '../../../../types/ControlItem';
+import { ControlItem } from '../../../../types/ControlItem';
+import { RootState } from '../../../../store';
+import {
+  clearControlItemList,
+  updateControlItemList,
+} from '../../../../store/controlTerminal/action';
+import { updateUserDetails } from '../../../../store/userDetails/action';
 
 const CommandLine = (): JSX.Element => {
-  const [controlMessage, setControlMessage] = useState<controlItem[]>([]);
+  const dispatch = useDispatch();
+  const controlTerminal = useSelector((state: RootState) => state.controlTerminal);
   const [consoleInput, setConsoleInput] = useState<string>(''); // The words in the input field
 
   const [autoScroll, setAutoScroll] = useState<boolean>(true);
@@ -22,7 +30,7 @@ const CommandLine = (): JSX.Element => {
     isError: false,
     errorType: 'Previous command: N/A',
   }); // Shows the error from terminal input
-  const scrollRef = useRef<null | HTMLLIElement>(null); // Auto scroll reference
+  const scrollRef = useRef<null | HTMLDivElement>(null); // Auto scroll reference
 
   const [publishingData, setPublishingData] = useState<boolean>(false);
   const [buttonLabel, setbuttonLabel] = useState<string>('Stopped');
@@ -43,30 +51,24 @@ const CommandLine = (): JSX.Element => {
     topic: 'tcp/control', // topic to sub to
   });
 
-  // Items in the command list
-  const Item = ({ value, alignment, color }: controlItem): JSX.Element => {
-    return (
-      <Typography align={alignment} color={color}>
-        {value}
-      </Typography>
-    );
-  };
-
   // Sending commands input field
   const sendCommand = (keyPressed: string | null) => {
     if (keyPressed === 'Enter' || keyPressed === 'ButtonPressed') {
       if (validArduinoCommands.findIndex((elements) => elements.command === consoleInput) >= 0) {
-        setControlMessage([
-          ...controlMessage,
-          { value: consoleInput, alignment: 'right', color: 'green' },
-        ]);
+        dispatch(
+          updateControlItemList('terminalList', [
+            ...controlTerminal.terminalList,
+            { value: consoleInput, alignment: 'right', color: 'green' },
+          ]),
+        );
       } else {
-        setControlMessage([
-          ...controlMessage,
-          { value: consoleInput, alignment: 'right', color: 'red' },
-        ]);
+        dispatch(
+          updateControlItemList('terminalList', [
+            ...controlTerminal.terminalList,
+            { value: consoleInput, alignment: 'right', color: 'red' },
+          ]),
+        );
       }
-
       if (!consoleInput.replace(/\s/g, '').length) {
         // Empty string?
         setCurrentError({ isError: true, errorType: 'Input are only white spaces' });
@@ -75,6 +77,11 @@ const CommandLine = (): JSX.Element => {
         if (connectStatus === 'Connected') {
           handlePublishMessage(consoleInput);
           setConsoleInput(''); // Reset the text field to blank
+        }
+      }
+      if (autoScroll === true) {
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
       }
     }
@@ -100,37 +107,52 @@ const CommandLine = (): JSX.Element => {
   // Publishing data button
   const handlePublishing = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPublishingData(event.target.checked);
-
     if (event.target.checked === true) {
       setbuttonLabel('Start');
       handlePublishMessage('send_data');
-      setControlMessage([...controlMessage, { value: 'send_data', alignment: 'right' }]);
+      dispatch(
+        updateControlItemList('terminalList', [
+          ...controlTerminal.terminalList,
+          { value: 'send_data', alignment: 'right' },
+        ]),
+      );
     } else {
-      setbuttonLabel('Stop');
+      setConsoleInput('stop_data');
       handlePublishMessage('stop_data');
-      setControlMessage([...controlMessage, { value: 'stop_data', alignment: 'right' }]);
+      dispatch(
+        updateControlItemList('terminalList', [
+          ...controlTerminal.terminalList,
+          { value: 'stop_data', alignment: 'right' },
+        ]),
+      );
     }
   };
 
   // Console terminal
   useEffect(() => {
     if (payload) {
-      setControlMessage([...controlMessage, { value: payload, alignment: 'left' }]);
-      if (controlMessage.length > 500) {
-        setControlMessage([...controlMessage.slice(1), { value: payload, alignment: 'left' }]);
+      dispatch(
+        updateControlItemList('terminalList', [
+          ...controlTerminal.terminalList,
+          { value: payload, alignment: 'left' },
+        ]),
+      );
+      if (controlTerminal.terminalList.length > 500) {
+        dispatch(
+          updateControlItemList('terminalList', [
+            ...controlTerminal.terminalList.slice(1),
+            { value: payload, alignment: 'left' },
+          ]),
+        );
+      }
+    }
+    if (autoScroll === true) {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payload]); // Event is when payload changes
-
-  // Auto scroll in terminal
-  useEffect(() => {
-    if (autoScroll === true) {
-      if (scrollRef.current) {
-        scrollRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-  }, [controlMessage, autoScroll]);
 
   return (
     <>
@@ -158,19 +180,15 @@ const CommandLine = (): JSX.Element => {
         </FormLabel>
       </FormGroup>
 
-      <Paper variant="outlined" className={styles.consoleTerminal}>
+      <Paper ref={scrollRef} variant="outlined" className={styles.consoleTerminal}>
         <List dense>
           <Typography component="span">
-            {controlMessage.map((item: controlItem, index: number) => (
-              <Item
-                value={item.value}
-                alignment={item.alignment}
-                // eslint-disable-next-line react/no-array-index-key
-                key={item.value + index}
-                color={item.color}
-              />
+            {controlTerminal.terminalList.map((item: ControlItem, index: number) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <Typography align={item.alignment} color={item.color} key={item.value + index}>
+                {item.value}
+              </Typography>
             ))}
-            <Typography component="span" ref={scrollRef} />
           </Typography>
         </List>
       </Paper>

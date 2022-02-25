@@ -1,18 +1,27 @@
-import { createStore, applyMiddleware, compose } from 'redux';
-import { all } from 'redux-saga/effects';
-import createSagaMiddleware from 'redux-saga';
-import reducer from './reducer';
-import { DatasSaga } from '../pages/ReduxAPISample';
+import { applyMiddleware, combineReducers, createStore, Middleware, StoreEnhancer } from 'redux';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import thunkMiddleware from 'redux-thunk';
+import Config from '../Config';
+import userDetails, { UserDetailsState } from './userDetails/reducer';
+import controlTerminal, { ControlTerminalState } from './controlTerminal/reducer';
 
-const sagaMiddleware = createSagaMiddleware();
+export const rootReducer = combineReducers({
+  userDetails,
+  controlTerminal,
+});
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-const store = createStore(reducer, composeEnhancers(applyMiddleware(sagaMiddleware)));
-
-function* rootSaga() {
-  yield all([DatasSaga()]);
+export interface RootState {
+  userDetails: UserDetailsState;
+  controlTerminal: ControlTerminalState;
 }
-sagaMiddleware.run(rootSaga);
 
-export default store;
+const bindMiddleware = (middleware: Middleware[]): StoreEnhancer => {
+  if (Config.nodeEnv === 'development') {
+    return composeWithDevTools(applyMiddleware(...middleware));
+  }
+  return applyMiddleware(...middleware);
+};
+
+export const store = createStore(rootReducer, bindMiddleware([thunkMiddleware]));
+
+export default rootReducer;
