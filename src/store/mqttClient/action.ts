@@ -1,33 +1,48 @@
 import { Dispatch } from 'redux';
-import { UPDATE_TERMINAL_LIST, CLEAR_TERMINAL_LIST } from './actionTypes';
-import { ControlItem } from '../../types/ControlItem';
-import { ControlTerminalState } from './reducer';
+import {
+  UPDATE_MQTT_HOST,
+  UPDATE_MQTT_PROTOCOL,
+  UPDATE_MQTT_PORT,
+  UPDATE_MQTT_TOPIC,
+  UPDATE_MQTT_DUPLICATES,
+  CLEAR_MQTT_OPTIONS,
+} from './actionTypes';
+import { MQTTOptionsState } from './reducer';
 
-const getActionType = (key: keyof ControlTerminalState): string => {
+const getActionType = (key: keyof MQTTOptionsState): string => {
   switch (key) {
-    case 'terminalList':
-      return UPDATE_TERMINAL_LIST;
+    case 'host':
+      return UPDATE_MQTT_HOST;
+    case 'protocol':
+      return UPDATE_MQTT_PROTOCOL;
+    case 'port':
+      return UPDATE_MQTT_PORT;
+    case 'topic':
+      return UPDATE_MQTT_TOPIC;
+    case 'duplicates':
+      return UPDATE_MQTT_DUPLICATES;
     default:
       return '';
   }
 };
 
-export type UpdateControlTerminalDispatchType = Dispatch<{
+export type UpdateMQTTOptionsDispatchType = Dispatch<{
   type: string;
-  payload: ControlTerminalState;
+  payload: MQTTOptionsState;
 }>;
 
-export const updateControlItemList =
-  (key: keyof ControlTerminalState, value: ControlItem[]) =>
-  (dispatch: Dispatch): ReturnType<UpdateControlTerminalDispatchType> =>
+export const updateMQTTOptions =
+  (key: keyof MQTTOptionsState, value: MQTTOptionsState) =>
+  (dispatch: Dispatch): ReturnType<UpdateMQTTOptionsDispatchType> =>
     dispatch({
-      type: getActionType(key), // Updates action according to key
-      payload: { [key]: value },
+      type: getActionType(key),
+      // payload: { [key]: value },
+      payload: value,
     });
 
-export const clearControlItemList =
+export const clearMQTTOptions =
   () =>
-  (dispatch: Dispatch): Omit<UpdateControlTerminalDispatchType, 'payload'> =>
+  (dispatch: Dispatch): Omit<UpdateMQTTOptionsDispatchType, 'payload'> =>
     dispatch({
-      type: CLEAR_TERMINAL_LIST,
+      type: CLEAR_MQTT_OPTIONS,
     });

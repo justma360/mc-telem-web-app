@@ -1,14 +1,17 @@
 import React, { useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { ArduinoData } from '../../types';
 import transformArduinoData from '../../utils/transformArduinoData';
 import useMqttClient from '../../hooks/useMqttClient';
 import { MainLayout } from '../../layouts';
+import { RootState } from '../../store';
 
 const RawData = (): JSX.Element => {
+  const MQTTGlobalOptions = useSelector((state: RootState) => state.MQTTOptions);
   const { connectStatus, payload } = useMqttClient({
-    host: '14.198.73.121', // Home IP
-    protocol: 'tcp', // Protocall
-    port: 9001,
+    host: MQTTGlobalOptions.host, // Home IP
+    protocol: MQTTGlobalOptions.protocol, // Protocall
+    port: MQTTGlobalOptions.port, // Port forward port on RPi
     topic: 'tcp/arduino_data', // topic to sub to
     duplicates: false,
   });

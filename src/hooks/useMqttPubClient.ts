@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import mqtt, { MqttClient } from 'mqtt';
+import MQTTOptionsType from '../types/MQTTOptionsType';
 
 interface ReturnType {
   connectStatus: string;
@@ -7,14 +8,9 @@ interface ReturnType {
   handlePublishMessage: (msg: string) => void;
 }
 
-interface OptionsType {
-  protocol: 'tcp' | 'ws' | 'wss' | 'mqtts';
-  host: string; // IP Address or URL
-  port: number;
-  topic: string;
-}
-
-const useMqttPubClient = ({ protocol, host, port, topic }: OptionsType): ReturnType => {
+const useMqttPubClient = ({ protocol, host, port, topic }: MQTTOptionsType): ReturnType => {
+  // const [prevMessage, setPrevMessage] = useState<string[]>(['na', 'na']);
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [client, setClient] = useState<MqttClient | null>(null);
   const [connectStatus, setConnectStatus] = useState('Offline');
   const [publishMessage, setPublishMessage] = useState<string | null>(null);
@@ -38,12 +34,18 @@ const useMqttPubClient = ({ protocol, host, port, topic }: OptionsType): ReturnT
       });
       client.on('reconnect', () => {
         setConnectStatus('Reconnecting');
+        setReconnectAttempts(reconnectAttempts + 1);
+        if (reconnectAttempts > 5) {
+          client.end();
+          setReconnectAttempts(0);
+        }
       });
-      if (publishMessage) {
+
+      if (publishMessage && topic) {
         client.publish(topic, publishMessage);
       }
     }
-  }, [client, topic, publishMessage]);
+  }, [client, topic, publishMessage, reconnectAttempts]);
 
   return {
     connectStatus,

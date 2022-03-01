@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import mqtt, { MqttClient } from 'mqtt';
+import MQTTOptionsType from '../types/MQTTOptionsType';
 
 interface ReturnType {
   connectStatus: string;
@@ -7,15 +8,14 @@ interface ReturnType {
   client: MqttClient | null;
 }
 
-interface OptionsType {
-  protocol: 'tcp' | 'ws' | 'wss' | 'mqtts';
-  host: string; // IP Address or URL
-  port: number;
-  topic: string;
-  duplicates: boolean;
-}
-
-const useMqttClient = ({ protocol, host, port, topic, duplicates }: OptionsType): ReturnType => {
+const useMqttClient = ({
+  host,
+  protocol,
+  port,
+  topic,
+  duplicates,
+}: MQTTOptionsType): ReturnType => {
+  const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [client, setClient] = useState<MqttClient | null>(null);
   const [connectStatus, setConnectStatus] = useState('Offline');
   const [payload, setPayload] = useState<string | null>(null);
@@ -35,16 +35,23 @@ const useMqttClient = ({ protocol, host, port, topic, duplicates }: OptionsType)
       });
       client.on('reconnect', () => {
         setConnectStatus('Reconnecting');
-      });
-      client.subscribe(topic);
-      client.on('message', (_, message) => {
-        if (duplicates === false) {
-          if (payload === message.toString()) return;
+        setReconnectAttempts(reconnectAttempts + 1);
+        if (reconnectAttempts > 5) {
+          client.end();
+          setReconnectAttempts(0);
         }
-        setPayload(message.toString());
       });
+      if (topic) {
+        client.subscribe(topic);
+        client.on('message', (_, message) => {
+          if (duplicates === false) {
+            if (payload === message.toString()) return;
+          }
+          setPayload(message.toString());
+        });
+      }
     }
-  }, [client, payload, topic, duplicates]);
+  }, [client, payload, topic, duplicates, reconnectAttempts]);
 
   return {
     connectStatus,

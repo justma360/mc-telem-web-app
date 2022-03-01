@@ -3,7 +3,7 @@ import { ArduinoCommands } from '../types/ArduinoCommands';
 const validArduinoCommands: ArduinoCommands[] = [
   {
     task: 'Send data',
-    command: 'send_data',
+    command: 'start_data',
     notes: 'Start sending data to MQTT server',
   },
   {
@@ -13,12 +13,12 @@ const validArduinoCommands: ArduinoCommands[] = [
   },
   {
     task: 'LED on',
-    command: 'on',
+    command: 'LED_on',
     notes: 'Turns onboard LED on',
   },
   {
     task: 'LED off',
-    command: 'off',
+    command: 'LED_off',
     notes: 'Turns onboard LED off',
   },
   {

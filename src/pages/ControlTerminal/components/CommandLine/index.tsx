@@ -4,8 +4,6 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { FormLabel } from '@material-ui/core';
 import { Button, TextField, Paper, List, Typography } from '@mui/material';
-import { green } from '@mui/material/colors';
-import { alpha, styled } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import useMqttPubClient from '../../../../hooks/useMqttPubClient';
 import { errorClass } from '../../../../utils/Error';
@@ -14,15 +12,15 @@ import validArduinoCommands from '../../../../constants/validArduinoCommands';
 import styles from './styles.module.scss';
 import { ControlItem } from '../../../../types/ControlItem';
 import { RootState } from '../../../../store';
-import {
-  clearControlItemList,
-  updateControlItemList,
-} from '../../../../store/controlTerminal/action';
-import { updateUserDetails } from '../../../../store/userDetails/action';
+import { updateControlItemList } from '../../../../store/controlTerminal/action';
+import { GreenSwitch } from './components/switches';
+import parsingMqttCommand from '../../../../hooks/parsingMqttCommand';
 
 const CommandLine = (): JSX.Element => {
   const dispatch = useDispatch();
   const controlTerminal = useSelector((state: RootState) => state.controlTerminal);
+  const MQTTGlobalOptions = useSelector((state: RootState) => state.MQTTOptions);
+  const { handleMqttUpdate } = parsingMqttCommand();
   const [consoleInput, setConsoleInput] = useState<string>(''); // The words in the input field
 
   const [autoScroll, setAutoScroll] = useState<boolean>(true);
@@ -37,53 +35,57 @@ const CommandLine = (): JSX.Element => {
 
   // This receives from the Arduino
   const { connectStatus, payload } = useMqttClient({
-    host: '14.198.73.218', // Home IP
-    protocol: 'tcp', // Protocall
-    port: 9001,
+    host: MQTTGlobalOptions.host, // Home IP
+    protocol: MQTTGlobalOptions.protocol, // Protocall
+    port: MQTTGlobalOptions.port, // Port forward port on RPi
     topic: 'tcp/control_return', // topic to sub to
     duplicates: true,
   });
   // This sends to Arduino
   const { handlePublishMessage } = useMqttPubClient({
-    host: '14.198.73.218', // Home IP
-    protocol: 'tcp', // Protocall
-    port: 9001,
+    host: MQTTGlobalOptions.host, // Home IP
+    protocol: MQTTGlobalOptions.protocol, // Protocall
+    port: MQTTGlobalOptions.port, // Port forward port on RPi
     topic: 'tcp/control', // topic to sub to
   });
+  const [prevSentCommand, setPrevSentCommand] = useState<number>(0);
 
   // Sending commands input field
   const sendCommand = (keyPressed: string | null) => {
     if (keyPressed === 'Enter' || keyPressed === 'ButtonPressed') {
-      if (validArduinoCommands.findIndex((elements) => elements.command === consoleInput) >= 0) {
-        dispatch(
-          updateControlItemList('terminalList', [
-            ...controlTerminal.terminalList,
-            { value: consoleInput, alignment: 'right', color: 'green' },
-          ]),
-        );
-      } else {
-        dispatch(
-          updateControlItemList('terminalList', [
-            ...controlTerminal.terminalList,
-            { value: consoleInput, alignment: 'right', color: 'red' },
-          ]),
-        );
-      }
       if (!consoleInput.replace(/\s/g, '').length) {
         // Empty string?
         setCurrentError({ isError: true, errorType: 'Input are only white spaces' });
       } else {
-        setCurrentError({ isError: false, errorType: `Previous command: "${consoleInput}"` });
+        if (validArduinoCommands.findIndex((elements) => elements.command === consoleInput) >= 0) {
+          dispatch(
+            updateControlItemList('terminalList', [
+              ...controlTerminal.terminalList,
+              { value: consoleInput, alignment: 'right', color: 'green' },
+            ]),
+          );
+        } else {
+          dispatch(
+            updateControlItemList('terminalList', [
+              ...controlTerminal.terminalList,
+              { value: consoleInput, alignment: 'right', color: 'red' },
+            ]),
+          );
+        }
+
+        handleMqttUpdate(consoleInput);
         if (connectStatus === 'Connected') {
           handlePublishMessage(consoleInput);
-          setConsoleInput(''); // Reset the text field to blank
         }
+        setCurrentError({ isError: false, errorType: `Previous command: "${consoleInput}"` });
       }
       if (autoScroll === true) {
         if (scrollRef.current) {
           scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
         }
       }
+      setConsoleInput(''); // Reset the text field to blank
+      setPrevSentCommand(0);
     }
   };
 
@@ -91,18 +93,25 @@ const CommandLine = (): JSX.Element => {
     setAutoScroll(event.target.checked);
   };
 
-  // Green switch for publishing data
-  const GreenSwitch = styled(Switch)(({ theme }) => ({
-    '& .MuiSwitch-switchBase.Mui-checked': {
-      color: green[600],
-      '&:hover': {
-        backgroundColor: alpha(green[600], theme.palette.action.hoverOpacity),
-      },
-    },
-    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-      backgroundColor: green[600],
-    },
-  }));
+  const prevCommand = (keyPressed: string | null) => {
+    let newPrevSentCommand: number | undefined = prevSentCommand;
+
+    if (keyPressed === 'ArrowUp' && controlTerminal.terminalList.length >= newPrevSentCommand) {
+      newPrevSentCommand = prevSentCommand + 1;
+    } else if (keyPressed === 'ArrowDown' && newPrevSentCommand > 0) {
+      newPrevSentCommand = prevSentCommand - 1;
+    }
+
+    if (!newPrevSentCommand) return;
+    setPrevSentCommand(newPrevSentCommand);
+
+    if (newPrevSentCommand >= 0 && controlTerminal.terminalList.length >= newPrevSentCommand) {
+      setConsoleInput(
+        controlTerminal.terminalList[controlTerminal.terminalList.length - newPrevSentCommand]
+          .value,
+      );
+    }
+  };
 
   // Publishing data button
   const handlePublishing = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +122,7 @@ const CommandLine = (): JSX.Element => {
       dispatch(
         updateControlItemList('terminalList', [
           ...controlTerminal.terminalList,
-          { value: 'send_data', alignment: 'right' },
+          { value: 'start_data', alignment: 'right' },
         ]),
       );
     } else {
@@ -156,10 +165,13 @@ const CommandLine = (): JSX.Element => {
 
   return (
     <>
-      <Typography variant="h3" display="inline">
-        Terminal connection status:
+      <Typography variant="h3">
+        MQTT IP:
+        {MQTTGlobalOptions.protocol}
+        {MQTTGlobalOptions.host}
       </Typography>
       <Typography variant="h3" display="inline">
+        Terminal connection status:
         {connectStatus}
       </Typography>
 
@@ -202,6 +214,7 @@ const CommandLine = (): JSX.Element => {
             onChange={(event) => setConsoleInput(event.target.value)} // when the field changes set the value to be input
             value={consoleInput} // The field value is the input
             onKeyPress={(event) => sendCommand(event.key)}
+            onKeyDown={(event) => prevCommand(event.key)}
             color="primary"
             autoComplete="off"
           />
