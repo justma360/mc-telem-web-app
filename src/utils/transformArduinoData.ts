@@ -9,10 +9,11 @@ export const transformArduinoData = (data: string): ArduinoData => {
     angleX: Math.round(numberData[0]),
     angleY: Math.round(numberData[1]),
     angleZ: Math.round(numberData[2]),
-    gpsLat: Math.round(numberData[3] + Number.EPSILON * 1000000) / 1000000,
-    gpsLong: Math.round(numberData[4] + Number.EPSILON * 1000000) / 10000000,
+    gpsLat: numberData[3],
+    gpsLong: numberData[4],
     gpsSpeed: Math.round(numberData[5]),
     tyreTemp: Math.round(numberData[6]),
+    ambientTemp: Math.round(numberData[7]),
     time: new Date().getTime(),
   };
 

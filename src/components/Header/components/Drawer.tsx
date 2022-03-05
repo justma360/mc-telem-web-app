@@ -14,6 +14,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import BookIcon from '@mui/icons-material/Book';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import TerminalIcon from '@mui/icons-material/Terminal';
+import TwoWheelerIcon from '@mui/icons-material/TwoWheeler';
 
 interface Props {
   open: boolean;
@@ -38,7 +39,12 @@ const Drawer = memo(({ open, handleToggleNavMenu }: Props): JSX.Element => {
       icon: <TimelineIcon />,
     },
     {
-      path: '/ControlTerminal',
+      path: '/locations',
+      name: 'Locations',
+      icon: <TwoWheelerIcon />,
+    },
+    {
+      path: '/control-terminal',
       name: 'Control Terminal',
       icon: <TerminalIcon />,
     },

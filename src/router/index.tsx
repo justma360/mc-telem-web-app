@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
 import RawData from '../pages/RawData/RawData';
 import Graphs from '../pages/Graphs/Graphs';
+import Locations from '../pages/Locations/Locations';
 import About from '../pages/About/About';
 import Home from '../pages/Home/Home';
 import Blog from '../pages/Blog/Blog';
@@ -14,7 +15,8 @@ const MainRouter = (): JSX.Element => (
       <Route exact path="/" component={Home} />
       <Route exact path="/raw-data" component={RawData} />
       <Route exact path="/graphs" component={Graphs} />
-      <Route exact path="/ControlTerminal" component={ControlTerminal} />
+      <Route exact path="/locations" component={Locations} />
+      <Route exact path="/control-terminal" component={ControlTerminal} />
       <Route exact path="/about" component={About} />
       <Route exact path="/blog" component={Blog} />
     </Switch>
