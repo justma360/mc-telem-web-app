@@ -1,1 +1,1 @@
-export * from './MarkedMap';
+export * from './GMap/GMap';
