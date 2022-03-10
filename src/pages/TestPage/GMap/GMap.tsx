@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 import { Map, GoogleApiWrapper, Marker, IMapProps } from 'google-maps-react';
-import useDeepCompareEffect from 'use-deep-compare-effect';
 
 // const markerStyle = {
 //   position: 'absolute',

@@ -5,7 +5,8 @@ export interface ArduinoData {
   angleZ: number;
   gpsLat: number;
   gpsLong: number;
-  gpsSpeed: number;
+  gpsAngle: number;
   tyreTemp: number;
   ambientTemp: number;
+  gpsSpeed: number;
 }

@@ -4,4 +4,5 @@ export default interface MQTTOptionsType {
   port?: number;
   topic?: string;
   duplicates?: boolean;
+  interval?: number;
 }
