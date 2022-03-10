@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import styles from 'style.module.scss';
-import { relative } from 'path';
-import pin from './pin.png';
 import motorcyclePin from './motorcycleSidePin.png';
 
 interface Props {

@@ -20,9 +20,9 @@ const Locations = (): JSX.Element => {
     protocol: MQTTGlobalOptions.protocol, // Protocall
     port: MQTTGlobalOptions.port, // Port forward port on RPi
     topic: 'tcp/arduino_data', // topic to sub to
-    duplicates: false,
-    interval: 500,
+    duplicates: true,
   });
+
   const latestData = transformArduinoData(payload || '');
 
   const handleTrackMC = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,7 +30,7 @@ const Locations = (): JSX.Element => {
   };
 
   const handleClick = () => {
-    console.log('Click Out');
+    // console.log('Click Out');
   };
 
   return (

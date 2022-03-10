@@ -34,10 +34,6 @@ const LocationMap = ({
   defaultZoom,
   trackingMC,
   arduinoData,
-  center,
-  zoom,
-  style,
-  children,
   onClick,
   ...options
 }: Props): JSX.Element => {
@@ -47,10 +43,11 @@ const LocationMap = ({
   useEffect(() => {
     const intervalId = setInterval(() => {
       if (arduinoData) {
+        // console.log(arduinoData);
         setMcLocation({
           mapCenter: {
             lat: arduinoData.gpsLat,
-            lng: arduinoData.gpsLong,
+            lng: arduinoData.gpsLong + new Date().getSeconds() / 10000,
           },
           angleZ: arduinoData.angleZ,
           gpsSpeed: arduinoData.gpsSpeed,
@@ -68,13 +65,13 @@ const LocationMap = ({
           mapCenter: undefined,
         });
       }
-    }, 1);
+    }, 1000);
     return () => clearInterval(intervalId); // This is important
   }, [arduinoData, mcLocation, trackMC, trackingMC]);
 
   return (
     <>
-      <div style={style}>
+      <div style={options.style}>
         <GoogleMapReact
           bootstrapURLKeys={{ key: 'AIzaSyDqVBwLWJmQraO_Zz6PYAHze_vpcRbiQR0' }}
           defaultCenter={defaultCenter}

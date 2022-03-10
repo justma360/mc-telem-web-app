@@ -14,7 +14,6 @@ const useMqttClient = ({
   port,
   topic,
   duplicates,
-  interval,
 }: MQTTOptionsType): ReturnType => {
   const [reconnectAttempts, setReconnectAttempts] = useState(0);
   const [client, setClient] = useState<MqttClient | null>(null);
@@ -45,22 +44,14 @@ const useMqttClient = ({
       if (topic) {
         client.subscribe(topic);
         client.on('message', (_, message) => {
-          if (interval) {
-            setInterval(function updatePayload() {
-              if (duplicates === false) {
-                if (payload === message.toString()) return;
-              }
-              setPayload(message.toString());
-            }, interval);
-            // if (duplicates === false) {
-            //   if (payload === message.toString()) return;
-            // }
-            // setPayload(message.toString());
+          if (duplicates === false) {
+            if (payload === message.toString()) return;
           }
+          setPayload(message.toString());
         });
       }
     }
-  }, [client, payload, topic, duplicates, reconnectAttempts, interval]);
+  }, [client, payload, topic, duplicates, reconnectAttempts]);
 
   return {
     connectStatus,
@@ -70,3 +61,14 @@ const useMqttClient = ({
 };
 
 export default useMqttClient;
+
+// if (interval !== undefined) {
+//   setInterval(function updatePayload() {
+//     client.on('message', (_, message) => {
+//       if (duplicates === false) {
+//         if (payload === message.toString()) return;
+//       }
+//       setPayload(message.toString());
+//     });
+//   }, interval);
+// }
