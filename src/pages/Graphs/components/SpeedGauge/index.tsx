@@ -48,7 +48,7 @@ const SpeedGauge = ({ dataInput, updateInterval }: Props): JSX.Element => {
 
     yAxis: {
       min: 0,
-      max: 100,
+      max: 250,
       lineWidth: 0,
       tickPositions: [],
     },

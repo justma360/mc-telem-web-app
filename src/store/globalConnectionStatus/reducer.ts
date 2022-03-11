@@ -7,14 +7,14 @@ import {
 } from './actionTypes';
 
 export type GlobalConnectionState = {
-  status: 'Connected' | 'Disconnected' | 'Sending';
-  prevMessageTime?: { time: number; message: string };
+  status?: 'Connected' | 'Disconnected' | 'Sending';
+  prevMessageTime?: { time: number; message?: string };
   error?: string;
 };
 
 const initialState: GlobalConnectionState = {
   status: 'Disconnected',
-  prevMessageTime: { time: 0, message: 'N/A' },
+  prevMessageTime: { time: 100, message: 'N/A' },
   error: 'N/A',
 };
 

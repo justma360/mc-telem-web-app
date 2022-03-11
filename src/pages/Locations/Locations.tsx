@@ -88,7 +88,12 @@ const Locations = (): JSX.Element => {
           </FormLabel>
         </div>
         <MarkedMap
-          style={{ height: '75%', width: '95%', position: 'relative', padding: '1px' }}
+          style={{
+            height: '75%',
+            width: '100%',
+
+            padding: '5px',
+          }}
           defaultCenter={defaultMapSettings.center}
           defaultZoom={defaultMapSettings.zoom}
           trackingMC={trackMC}
