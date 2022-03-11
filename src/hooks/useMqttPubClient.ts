@@ -40,9 +40,13 @@ const useMqttPubClient = ({ protocol, host, port, topic }: MQTTOptionsType): Ret
           setReconnectAttempts(0);
         }
       });
-
       if (publishMessage && topic) {
-        client.publish(topic, publishMessage);
+        if (publishMessage.includes('ack')) {
+          console.log(publishMessage);
+          client.publish(topic, 'ack');
+        } else {
+          client.publish(topic, publishMessage);
+        }
       }
     }
   }, [client, topic, publishMessage, reconnectAttempts]);

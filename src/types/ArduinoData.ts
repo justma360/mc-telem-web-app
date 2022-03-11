@@ -1,5 +1,6 @@
 export interface ArduinoData {
   time: number;
+  arduinoTime: number;
   angleX: number;
   angleY: number;
   angleZ: number;

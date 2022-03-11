@@ -1,1 +1,2 @@
-export * from '../../TestPage/GMap/GMap';
+export * from './LocationMap';
+export * from './MapMarker';

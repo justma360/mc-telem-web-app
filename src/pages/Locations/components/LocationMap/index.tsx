@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import GoogleMapReact from 'google-map-react';
-import MapMarker from '../MapMarker/MapMarker';
+import MapMarker from '../MapMarker';
 import { ArduinoData } from '../../../../types/ArduinoData';
 
 interface Coords {
@@ -24,7 +24,7 @@ interface Props {
   center?: number;
   zoom?: number;
   style?: { [key: string]: string };
-  children?: JSX.Element;
+  refreshInterval: number;
   onClick?: (value: GoogleMapReact.ClickEventValue) => void;
   // onIdle?: (map: google.maps.Map) => void;
 }
@@ -34,7 +34,9 @@ const LocationMap = ({
   defaultZoom,
   trackingMC,
   arduinoData,
+  refreshInterval,
   onClick,
+
   ...options
 }: Props): JSX.Element => {
   const [trackMC, setTrackMC] = useState<TrackMCSettings | undefined>({ mapZoom: defaultZoom });
@@ -47,7 +49,7 @@ const LocationMap = ({
         setMcLocation({
           mapCenter: {
             lat: arduinoData.gpsLat,
-            lng: arduinoData.gpsLong + new Date().getSeconds() / 10000,
+            lng: arduinoData.gpsLong,
           },
           angleZ: arduinoData.angleZ,
           gpsSpeed: arduinoData.gpsSpeed,
@@ -65,9 +67,9 @@ const LocationMap = ({
           mapCenter: undefined,
         });
       }
-    }, 1000);
+    }, refreshInterval);
     return () => clearInterval(intervalId); // This is important
-  }, [arduinoData, mcLocation, trackMC, trackingMC]);
+  }, [arduinoData, mcLocation, refreshInterval, trackMC, trackingMC]);
 
   return (
     <>

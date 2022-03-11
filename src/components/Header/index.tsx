@@ -1,22 +1,21 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
+import { IconButton, Stack, Typography, Menu } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import Drawer from './components/Drawer';
-import './styles.scss';
+import Drawer from './components/Drawer/Drawer';
+import HeaderStatusBar from './components/HeaderStatusBar/HeaderStatusBar';
+
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 export const Header = memo((): JSX.Element => {
-  const [anchorElUser, setAnchorElUser] = React.useState(false);
-  const [openDrawer, setOpenDrawer] = React.useState(false);
-  const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+  const [anchorElUser, setAnchorElUser] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
 
   const handleToggleNavMenu = (open?: boolean) => {
     // Left side links drawer
@@ -59,7 +58,8 @@ export const Header = memo((): JSX.Element => {
               </Typography>
             </Box>
 
-            {/* Shows the user settings when hovering */}
+            <HeaderStatusBar />
+
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleToggleUserMenu} sx={{ p: 0 }}>
