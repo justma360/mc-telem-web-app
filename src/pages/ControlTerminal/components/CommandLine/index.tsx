@@ -20,17 +20,18 @@ const CommandLine = (): JSX.Element => {
   const dispatch = useDispatch();
   const controlTerminal = useSelector((state: RootState) => state.controlTerminal);
   const MQTTGlobalOptions = useSelector((state: RootState) => state.MQTTOptions);
-  const { handleMqttUpdate } = parsingMqttCommand();
-  const [consoleInput, setConsoleInput] = useState<string>(''); // The words in the input field
 
-  const [autoScroll, setAutoScroll] = useState<boolean>(true);
+  const [consoleInput, setConsoleInput] = useState<string>(''); // The words in the input field
   const [currentError, setCurrentError] = useState<errorClass>({
     isError: false,
     errorType: 'Previous command: N/A',
   }); // Shows the error from terminal input
-  const scrollRef = useRef<null | HTMLDivElement>(null); // Auto scroll reference
-
+  const { handleMqttUpdate } = parsingMqttCommand();
   const [publishingData, setPublishingData] = useState<boolean>(false);
+
+  const [autoScroll, setAutoScroll] = useState<boolean>(true);
+  const [disAckMessage, setDisAckMessage] = useState<boolean>(true);
+  const scrollRef = useRef<null | HTMLDivElement>(null); // Auto scroll reference
   const [buttonLabel, setbuttonLabel] = useState<string>('Stopped');
 
   // This receives from the Arduino
@@ -50,7 +51,7 @@ const CommandLine = (): JSX.Element => {
   });
   const [prevSentCommand, setPrevSentCommand] = useState<number>(0);
 
-  // Sending commands input field
+  // Sending commands from the inputfield to MQTT
   const sendCommand = (keyPressed: string | null) => {
     if (keyPressed === 'Enter' || keyPressed === 'ButtonPressed') {
       if (!consoleInput.replace(/\s/g, '').length) {
@@ -73,10 +74,11 @@ const CommandLine = (): JSX.Element => {
           );
         }
 
-        handleMqttUpdate(consoleInput);
+        handleMqttUpdate(consoleInput); // Checks for changing server side updates
         if (connectStatus === 'Connected') {
           handlePublishMessage(consoleInput);
         }
+
         setCurrentError({ isError: false, errorType: `Previous command: "${consoleInput}"` });
       }
       if (autoScroll === true) {
@@ -89,10 +91,7 @@ const CommandLine = (): JSX.Element => {
     }
   };
 
-  const handleAutoScroll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAutoScroll(event.target.checked);
-  };
-
+  // Allows the user to press up to get the prev command in command line
   const prevCommand = (keyPressed: string | null) => {
     let newPrevSentCommand: number | undefined = prevSentCommand;
 
@@ -113,7 +112,17 @@ const CommandLine = (): JSX.Element => {
     }
   };
 
-  // Publishing data button
+  // Handles the auto scrolling features
+  const handleAutoScroll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAutoScroll(event.target.checked);
+  };
+
+  // Handles the auto scrolling features
+  const handleAckMessage = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDisAckMessage(event.target.checked);
+  };
+
+  // Publishing toggle button
   const handlePublishing = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPublishingData(event.target.checked);
     if (event.target.checked === true) {
@@ -137,7 +146,7 @@ const CommandLine = (): JSX.Element => {
     }
   };
 
-  // Console terminal
+  // Console terminal, if they payload changes
   useEffect(() => {
     if (payload) {
       dispatch(
@@ -186,6 +195,10 @@ const CommandLine = (): JSX.Element => {
             label="Auto Scroll"
           />
           <FormControlLabel
+            control={<Switch checked={disAckMessage} onChange={handleAckMessage} />}
+            label="Show Ack"
+          />
+          <FormControlLabel
             control={<GreenSwitch checked={publishingData} onChange={handlePublishing} />}
             label={buttonLabel}
           />
@@ -195,12 +208,14 @@ const CommandLine = (): JSX.Element => {
       <Paper ref={scrollRef} variant="outlined" className={styles.consoleTerminal}>
         <List dense>
           <Typography component="span">
-            {controlTerminal.terminalList.map((item: ControlItem, index: number) => (
-              // eslint-disable-next-line react/no-array-index-key
-              <Typography align={item.alignment} color={item.color} key={item.value + index}>
-                {item.value}
-              </Typography>
-            ))}
+            {controlTerminal.terminalList.map(
+              (item: ControlItem, index: number) =>
+                (item.value.includes('ack') && !disAckMessage) || ( // eslint-disable-next-line react/no-array-index-key
+                  <Typography align={item.alignment} color={item.color} key={item.value + index}>
+                    {item.value}
+                  </Typography>
+                ),
+            )}
           </Typography>
         </List>
       </Paper>

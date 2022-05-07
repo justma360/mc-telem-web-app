@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import mqtt, { MqttClient } from 'mqtt';
 import MQTTOptionsType from '../types/MQTTOptionsType';
 
@@ -19,6 +19,7 @@ const useMqttClient = ({
   const [client, setClient] = useState<MqttClient | null>(null);
   const [connectStatus, setConnectStatus] = useState('Offline');
   const [payload, setPayload] = useState<string | null>(null);
+  const numRef = useRef<string>('');
 
   useEffect(() => {
     const mqttClient = mqtt.connect(`${protocol}://${host}:${port}`);
@@ -47,12 +48,13 @@ const useMqttClient = ({
           if (duplicates === false) {
             if (payload === message.toString()) return;
           }
+          numRef.current = message.toString();
           setPayload(message.toString());
         });
       }
     }
   }, [client, payload, topic, duplicates, reconnectAttempts]);
-
+  // console.log('Payload is at', payload);
   return {
     connectStatus,
     payload,

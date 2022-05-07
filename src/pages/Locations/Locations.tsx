@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Switch from '@mui/material/Switch';
-import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { FormLabel } from '@material-ui/core';
-import { Typography, Box, Button, ButtonGroup } from '@mui/material';
+import { Typography, Button, ButtonGroup } from '@mui/material';
 import { MainLayout } from '../../layouts';
 import useMqttClient from '../../hooks/useMqttClient';
 import transformArduinoData from '../../utils/transformArduinoData';
@@ -91,7 +90,6 @@ const Locations = (): JSX.Element => {
           style={{
             height: '75%',
             width: '100%',
-
             padding: '5px',
           }}
           defaultCenter={defaultMapSettings.center}

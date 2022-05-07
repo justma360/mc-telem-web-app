@@ -18,9 +18,9 @@ export type MQTTOptionsState = {
 
 const initialState: MQTTOptionsState = {
   host: '14.198.75.165', // Home IP
-  protocol: 'tcp', // Protocall
+  protocol: 'ws', // Protocall
   port: 9001,
-  topic: '', // topic to sub to
+  topic: 'tcp/arduino_data', // topic to sub to
   duplicates: false,
 };
 

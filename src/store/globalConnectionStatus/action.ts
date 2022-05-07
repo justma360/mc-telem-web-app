@@ -1,6 +1,7 @@
 import { Dispatch } from 'redux';
 import {
   UPDATE_CONNECTION_STATUS,
+  UPDATE_CONNECTED_TOPIC,
   UPDATE_PREV_MESSAGE,
   UPDATE_CONNECTION_ERROR,
   CLEAR_CONNECTION_STATUS,
@@ -11,6 +12,8 @@ const getActionType = (key: keyof GlobalConnectionState): string => {
   switch (key) {
     case 'status':
       return UPDATE_CONNECTION_STATUS;
+    case 'connectedTopic':
+      return UPDATE_CONNECTED_TOPIC;
     case 'prevMessageTime':
       return UPDATE_PREV_MESSAGE;
     case 'error':

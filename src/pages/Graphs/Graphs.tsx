@@ -42,7 +42,7 @@ const Graphs = (): JSX.Element => {
 
         <Typography variant="h6">Graph will be placed here</Typography>
         <TemperatureChart dataInput={sensorDataArr} updateInterval={2} />
-        <SpeedGauge dataInput={sensorDataArr} updateInterval={1} />
+        <SpeedGauge dataInput={sensorDataArr} updateInterval={0.5} />
       </MainLayout>
     </>
   );

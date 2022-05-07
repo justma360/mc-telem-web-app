@@ -58,7 +58,7 @@ module.exports = {
     'no-nested-ternary': 0,
     'react/no-danger': 0,
     'react/prop-types': 0,
-    'no-shadow': 0,
+    'no-shadow': 'off',
     '@typescript-eslint/no-shadow': ['error'],
     'jsx-a11y/click-events-have-key-events': 0,
     'jsx-a11y/no-static-element-interactions': 0,
